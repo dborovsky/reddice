@@ -1,7 +1,24 @@
-import express from 'express'
-import path from 'path'
+import express from 'express';
+import path from 'path';
+
+import webpack from 'webpack';
+import webpackMiddleware from 'webpack-dev-middleware';
+import webpackHotMiddleware from 'webpack-hot-middleware';
+import webpackConfig from '../webpack.config.js';
 
 let app = express();
+
+const compieler = webpack(webpackConfig);
+
+app.use(webpackMiddleware(compieler, 
+  {
+    hot: true,
+    publicPath: webpackConfig.output.publicPath,
+    noInfo: true
+  }
+));
+
+app.use(webpackHotMiddleware(compieler));
 
 app.get('/*', (req, res) => {
     res.sendFile(path.join(__dirname, './index.html'));
